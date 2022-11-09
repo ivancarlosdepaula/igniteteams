@@ -1,4 +1,6 @@
-import { Alert } from 'react-native';
+import { useState } from 'react';
+import {FlatList} from 'react-native';
+
 import { Header } from '@components/Header';
 import { Highlight } from '@components/Highlight';
 import { GroupCard } from '@components/GroupCard';
@@ -8,6 +10,8 @@ import {
  } from './styles';
 
 export function Groups() {
+  const [groups, setGroups] = useState<string[]>(['Galera da Rocket', 'eTriax Team']);
+
   return (
     <Container>
       <Header />
@@ -15,7 +19,15 @@ export function Groups() {
         title='Turmas'
         subtitle='Joque com sua turma'
       />
-      <GroupCard title='Galera do Ignite' onPress={()=>{Alert.alert('Opa', 'Funcionou o click')}} />
+      <FlatList
+        data={groups}
+        keyExtractor={item=>item}
+        renderItem={({item}) => (
+          <GroupCard 
+            title={item}
+          />
+        )}
+      />
     </Container>
   );
 }
