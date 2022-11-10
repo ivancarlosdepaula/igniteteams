@@ -12,7 +12,7 @@ import {
  } from './styles';
 
 export function Groups() {
-  const [groups, setGroups] = useState<string[]>([]);
+  const [groups, setGroups] = useState<string[]>(['a', 'b', 'c', 'd', 'e', 'f']);
 
   return (
     <Container>
