@@ -14,7 +14,7 @@ import {
   Container,
   Form,
   HeaderList,
-  NumbersOfPlayers
+  NumberOfPlayers
 } from './styles';
 
 
@@ -48,9 +48,9 @@ export function Players(){
           horizontal
           showsVerticalScrollIndicator={false}
         />
-        <NumbersOfPlayers>
+        <NumberOfPlayers>
           {players.length}
-        </NumbersOfPlayers>
+        </NumberOfPlayers>
       </HeaderList>
       <FlatList 
         data={players}
