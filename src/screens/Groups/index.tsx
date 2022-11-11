@@ -12,7 +12,7 @@ import {
  } from './styles';
 
 export function Groups() {
-  const [groups, setGroups] = useState<string[]>(['a', 'b', 'c', 'd', 'e', 'f']);
+  const [groups, setGroups] = useState<string[]>(['Turma dos Malucos', 'Tudo doente por jogo', 'Bagunceiros Digitais', 'Eletro Crazys', 'Dancing Gamming']);
 
   return (
     <Container>
