@@ -18,7 +18,7 @@ import {
 
 export function Players(){
   const [team, setTeam] = useState('Time A');
-  const [players, setPlayers] = useState([]);
+  const [players, setPlayers] = useState(['Ivan Carlos de Paula', 'Ezequiel Donhauser', 'Jair Alba Jr']);
 
   return (
     <Container>
