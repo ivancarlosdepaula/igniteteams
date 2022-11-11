@@ -12,7 +12,7 @@ export function AppRoutes(){
       headerShown: false,
     }}>
       <Screen name='groups' component={Groups} />
-      <Screen name='newgroup' component={NewGroup} />
+      <Screen name='new' component={NewGroup} />
       <Screen name='players' component={Players} />
     </Navigator>
   )
