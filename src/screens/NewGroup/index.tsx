@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
+import { AppError } from '@utils/AppError';
+
 import { groupCreate } from '@storage/group/groupCreate';
 
 import { Header } from '@components/Header';
@@ -21,14 +23,18 @@ export function NewGroup(){
 
   async function handleNew(){
     try{
-      if(group.length < 3){
-        Alert.alert('Erro', 'O nome do grupo deve ter pelo menos 3 caracteres');
-        throw new Error('O nome do grupo deve ter pelo menos 3 caracteres');
+      if(group.trim().length < 3){
+        return Alert.alert('Erro', 'O nome da turma deve ter pelo menos 3 caracteres');
       }
       await groupCreate(group);
       navigation.navigate('players', {group});
     }catch(error){
-      console.log(error);
+      if(error instanceof AppError){
+        Alert.alert('Novo grupo', error.message);
+      }else{
+        Alert.alert('Novo grupo', 'Não foi possível criar o novo grupo');
+        console.log(error);
+      }
     }
   }
 
