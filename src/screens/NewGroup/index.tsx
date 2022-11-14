@@ -1,5 +1,8 @@
 import { useState } from 'react';
+import { Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+
+import { groupCreate } from '@storage/group/groupCreate';
 
 import { Header } from '@components/Header';
 import { Highlight } from '@components/Highlight';
@@ -16,9 +19,19 @@ export function NewGroup(){
   const [group, setGroup] = useState('');
   const navigation = useNavigation();
 
-  function handleNew(){
-    navigation.navigate('players', {group});
+  async function handleNew(){
+    try{
+      if(group.length < 3){
+        Alert.alert('Erro', 'O nome do grupo deve ter pelo menos 3 caracteres');
+        throw new Error('O nome do grupo deve ter pelo menos 3 caracteres');
+      }
+      await groupCreate(group);
+      navigation.navigate('players', {group});
+    }catch(error){
+      console.log(error);
+    }
   }
+
   return(
     <Container>
       <Header showBackButton />
