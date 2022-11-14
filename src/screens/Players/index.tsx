@@ -1,11 +1,12 @@
-import {useCallback, useState} from 'react';
-import {Alert, FlatList} from 'react-native';
+import {useCallback, useState, useEffect, useRef} from 'react';
+import {Alert, FlatList, TextInput} from 'react-native';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
 
+import { PlayerStorageDTO } from '@storage/player/PlayerStorageDTO';
 import { AppError } from '@utils/AppError';
 import { groupsGetAll } from '@storage/group/groupsGetAll';
 import { playerAddByGroup } from '@storage/player/playerAddByGroup';
-import { playersGetByGroup } from '@storage/player/playersGetByGroup';
+import { playersGetByGroupAndTeam } from '@storage/player/playersGetByGroupAndTeam';
 
 import { Header } from '@components/Header';
 import { Highlight } from '@components/Highlight';
@@ -31,15 +32,20 @@ type RouteParams = {
 export function Players(){
   const [team, setTeam] = useState('');
   const [newPlayerName, setNewPlayerName] = useState('');
-  const [players, setPlayers] = useState([]);
+  const [players, setPlayers] = useState<PlayerStorageDTO[]>([]);
   const route = useRoute();
   const {group} = route.params as RouteParams;
-  const [groups, setGroups] = useState<string[]>([]);
+  const newPlayerNameInputRef = useRef<TextInput>(null);
 
   async function handleAddPlayer(){
     if(newPlayerName.trim().length < 3){
       return Alert.alert('Nova pessoa', 'O nome da pessoa deve ter pelo menos 3 caracters.');
     }
+
+    if(team.length < 3){
+      return Alert.alert('Nova pessoa', 'Selecione um time abaixo.');
+    }
+
     const newPlayer = {
       name: newPlayerName,
       team
@@ -47,9 +53,9 @@ export function Players(){
 
     try {
       await playerAddByGroup(newPlayer, group);
-      const storedPlayers = await playersGetByGroup(group);
+      newPlayerNameInputRef.current?.blur();
       setNewPlayerName('');
-      console.log(players);
+      fetchPlayersByTeam();
     } catch (error) {
       if(error instanceof AppError){
         Alert.alert('Nova pessoa', error.message);
@@ -60,18 +66,19 @@ export function Players(){
     }
   }
 
-  async function fetchGroups(){
-    try{
-      const data = await groupsGetAll();
-      setGroups(data)
-    }catch(error){
-      console.log(error)
+  async function fetchPlayersByTeam(){
+    try {
+      const playersByTeam = await playersGetByGroupAndTeam(group, team);
+      setPlayers(playersByTeam);
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Listar players', 'Não foi possível listar os players.');
     }
   }
 
-  useFocusEffect(useCallback(()=>{
-    fetchGroups();
-  },[]));
+  useEffect(()=>{
+    fetchPlayersByTeam();
+  },[team]);
 
   return (
     <Container>
@@ -86,6 +93,9 @@ export function Players(){
           autoCorrect={false}
           onChangeText={setNewPlayerName}
           value={newPlayerName}
+          inputRef={newPlayerNameInputRef}
+          onSubmitEditing={handleAddPlayer}
+          returnKeyType='done'
         />
         <ButtonIcon 
           icon='add' 
@@ -96,7 +106,7 @@ export function Players(){
 
       <HeaderList>
         <FlatList 
-          data={groups}
+          data={['Time A', 'Time B']}
           keyExtractor={item => item}
           renderItem={({item})=> (
             <Filter
@@ -115,10 +125,10 @@ export function Players(){
       </HeaderList>
       <FlatList 
         data={players}
-        keyExtractor={item=>item}
+        keyExtractor={item=>item.name}
         renderItem={({item})=>(
           <PlayerCard 
-            name={item} 
+            name={item.name} 
             onRemove={()=>{}}
           />
         )}
