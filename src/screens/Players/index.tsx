@@ -17,6 +17,7 @@ import { Filter } from '@components/Filter';
 import { PlayerCard } from '@components/PlayerCard';
 import { ListEmpty } from '@components/ListEmpty';
 import { Button } from '@components/Button';
+import { Loading } from '@components/Loading';
 
 import { 
   Container,
@@ -31,6 +32,7 @@ type RouteParams = {
 
 
 export function Players(){
+  const [isLoading, setIsLoading] = useState(true);
   const [team, setTeam] = useState('');
   const [newPlayerName, setNewPlayerName] = useState('');
   const [players, setPlayers] = useState<PlayerStorageDTO[]>([]);
@@ -70,11 +72,14 @@ export function Players(){
 
   async function fetchPlayersByTeam(){
     try {
+      setIsLoading(true);
       const playersByTeam = await playersGetByGroupAndTeam(group, team);
       setPlayers(playersByTeam);
+      setIsLoading(false);
     } catch (error) {
       console.log(error);
       Alert.alert('Listar players', 'Não foi possível listar os players.');
+      setIsLoading(false);
     }
   }
 
@@ -152,7 +157,9 @@ export function Players(){
           {players.length}
         </NumberOfPlayers>
       </HeaderList>
-      <FlatList 
+      {
+        isLoading ? <Loading /> :
+        <FlatList 
         data={players}
         keyExtractor={item=>item.name}
         renderItem={({item})=>(
@@ -168,6 +175,7 @@ export function Players(){
           players.length === 0 && {flex: 1}
         ]}
       />
+      }
       <Button 
         title='Remover turma' 
         type='SECONDARY' 
