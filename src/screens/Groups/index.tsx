@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import {Alert, FlatList} from 'react-native';
-import {useNavigation, useFocusEffect} from '@react-navigation/native'
+import {FlatList} from 'react-native';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
 
 import { groupsGetAll } from '@storage/group/groupsGetAll';
 
